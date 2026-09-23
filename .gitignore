@@ -1,0 +1,21 @@
+# secrets: never push your API keys
+.env
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# Mac system files
+.DS_Store
+
+# generated files (anyone can rebuild them with scripts/build_index.py)
+data/index/*
+!data/index/.gitkeep
+eval/results.json
+
+# your PDFs stay on your computer (copyright + size)
+data/doc/*
+!data/doc/.gitkeep
