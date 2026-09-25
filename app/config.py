@@ -9,14 +9,27 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+# --- Chat (the model that writes the answer) ---
+CHAT_PROVIDER = os.getenv("CHAT_PROVIDER", "gemini")  
 CHAT_MODEL = os.getenv("CHAT_MODEL", "gemini-3.6-flash")
-EMBED_MODEL = os.getenv("EMBED_MODEL", "gemini-embedding-001")
+CHAT_BASE_URL = os.getenv("CHAT_BASE_URL", "")             # only for "openai"
+CHAT_API_KEY = os.getenv("CHAT_API_KEY", "")               # only for "openai"
+CHAT_TEMPERATURE = float(os.getenv("CHAT_TEMPERATURE", "0.1"))              # 0 = most factual, 1 = most creative
 
+# --- Embeddings (the model that turns text into vectors) ---
+EMBED_PROVIDER = os.getenv("EMBED_PROVIDER", "gemini")    # "gemini" or "openai"
+EMBED_MODEL = os.getenv("EMBED_MODEL", "gemini-embedding-001")
+EMBED_BASE_URL = os.getenv("EMBED_BASE_URL", "")           # only for "openai"
+EMBED_API_KEY = os.getenv("EMBED_API_KEY", "")             # only for "openai
+
+# --- Gemini key (used when a provider above is "gemini") ---
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+
+# --- RAG settings ---
 CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", "800"))
 CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", "150"))
 TOP_K = int(os.getenv("TOP_K", "4"))
 
 # Folders
-DOCS_FOLDER = "data/doc"
+DOCS_FOLDER = "data/docs"
 INDEX_FOLDER = "data/index"

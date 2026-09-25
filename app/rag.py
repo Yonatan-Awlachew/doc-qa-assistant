@@ -5,6 +5,7 @@ Step 4 of RAG: Retrieve + Augment + Generate.
   2. Augment:  put those chunks inside the prompt
   3. Generate: ask the LLM to answer using ONLY those chunks, with citations
 """
+import time
 from app import config, llm, store
 
 
@@ -33,6 +34,7 @@ def answer_question(question, vectors, chunks, top_k=None):
     if top_k is None:
         top_k = config.TOP_K
 
+    start_time = time.time()
     # 1. Retrieve
     question_vector = llm.embed_texts([question], task_type="RETRIEVAL_QUERY")[0]
     best_chunks = store.search(question_vector, vectors, chunks, top_k)
@@ -53,4 +55,10 @@ def answer_question(question, vectors, chunks, top_k=None):
             "preview": chunk["text"][:200],
         })
 
-    return {"question": question, "answer": answer, "sources": sources}
+    return {
+        "question": question, 
+        "answer": answer, 
+        "sources": sources,
+        "model": config.CHAT_MODEL,
+        "seconds": round(time.time() - start_time,2),
+        }

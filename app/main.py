@@ -47,6 +47,8 @@ class AskResponse(BaseModel):
     question: str
     answer: str
     sources: list[Source]
+    model: str
+    seconds: float
 
 
 @app.get("/health")
