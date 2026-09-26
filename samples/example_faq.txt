@@ -1,0 +1,5 @@
+Example University - Frequently Asked Questions (fictional sample)
+
+Where is the student office? The student office is in Building B, ground floor.
+When is the student office open? From Monday to Thursday, 9:00 to 12:00.
+How do I get my student card? Request it online in the student portal; it arrives in 10 days.

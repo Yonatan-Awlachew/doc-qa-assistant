@@ -1,35 +1,66 @@
-# FILE: app/loader.py
 """
-Step 1 of RAG: read the PDF files and get their text, page by page.
-We keep the page number so we can show citations later.
+Step 1 of RAG: read a file and get its text, page by page.
+v2: supports PDF, Word (.docx) and plain text (.txt, .md).
+
+Every function returns the SAME format, so the rest of the code does not care
+about the file type:
+    [{"source": "name.pdf", "page": 1, "text": "..."}, ...]
 """
 import os
+
+from docx import Document
 from pypdf import PdfReader
 
+TEXT_PAGE_SIZE = 3000  # .txt/.docx have no real pages: we cut them every 3000 characters
 
-def load_pdf(file_path):
-    """Read one PDF. Return a list of pages like {"source": ..., "page": ..., "text": ...}."""
+
+def clean_text(text):
+    return " ".join(text.split())  # remove extra spaces and line breaks
+
+
+def load_pdf(file_path, display_name):
     reader = PdfReader(file_path)
-    file_name = os.path.basename(file_path)
-
     pages = []
     for page_number, page in enumerate(reader.pages, start=1):
-        text = page.extract_text() or ""
-        text = " ".join(text.split())  # remove extra spaces and line breaks
-
+        text = clean_text(page.extract_text() or "")
         if len(text) > 0:  # skip empty pages (for example, image-only pages)
-            pages.append({"source": file_name, "page": page_number, "text": text})
-
+            pages.append({"source": display_name, "page": page_number, "text": text})
     return pages
 
 
-def load_all_pdfs(folder):
-    """Read every PDF inside a folder."""
-    all_pages = []
-    for file_name in sorted(os.listdir(folder)):
-        if file_name.lower().endswith(".pdf"):
-            file_path = os.path.join(folder, file_name)
-            pages = load_pdf(file_path)
-            print(f"Loaded {file_name}: {len(pages)} pages with text")
-            all_pages.extend(pages)
-    return all_pages
+def split_into_pages(text, display_name):
+    """For files without real pages: make 'pages' of about 3000 characters."""
+    pages = []
+    for i in range(0, len(text), TEXT_PAGE_SIZE):
+        piece = text[i:i + TEXT_PAGE_SIZE]
+        pages.append({"source": display_name, "page": len(pages) + 1, "text": piece})
+    return pages
+
+
+def load_docx(file_path, display_name):
+    document = Document(file_path)
+    paragraphs = [paragraph.text for paragraph in document.paragraphs]
+    text = clean_text(" ".join(paragraphs))
+    return split_into_pages(text, display_name)
+
+
+def load_txt(file_path, display_name):
+    with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+        text = clean_text(f.read())
+    return split_into_pages(text, display_name)
+
+
+def load_file(file_path, display_name):
+    """Choose the right reader from the file extension."""
+    extension = os.path.splitext(display_name)[1].lower()
+    if extension == ".pdf":
+        return load_pdf(file_path, display_name)
+    if extension == ".docx":
+        return load_docx(file_path, display_name)
+    if extension in (".txt", ".md"):
+        return load_txt(file_path, display_name)
+    raise ValueError(f"Unsupported file type: {extension}")
+
+
+def count_pdf_pages(file_path):
+    return len(PdfReader(file_path).pages)

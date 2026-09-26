@@ -1,22 +1,21 @@
-# FILE: scripts/ask_cli.py
 """
-Ask questions from the terminal, without the web API. Good for quick testing.
+Ask questions from the terminal, without the web page. Good for quick testing.
     python -m scripts.ask_cli
-Type "exit" to stop.
+It searches ALL uploaded documents. Type "exit" to stop.
 """
-from app import config, rag, store
+from app import database, rag
 
 
 def main():
-    vectors, chunks = store.load_index(config.INDEX_FOLDER)
-    print(f"Index loaded: {len(chunks)} chunks. Type your question (or 'exit').")
+    documents = database.list_documents()
+    print(f"{len(documents)} documents uploaded. Type your question (or 'exit').")
 
     while True:
         question = input("\nQuestion: ").strip()
         if question.lower() in ("exit", "quit", ""):
             break
 
-        result = rag.answer_question(question, vectors, chunks)
+        result = rag.ask(question)
         print("\nAnswer:\n" + result["answer"])
         print("\nSources:")
         for s in result["sources"]:

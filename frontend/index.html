@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document Q&A Assistant</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <h1>Document Q&amp;A Assistant</h1>
+    <p class="subtitle">Upload your documents, then ask questions. Answers come only from your files, with sources.</p>
+  </header>
+
+  <main>
+    <!-- 1. UPLOAD -->
+    <section class="card">
+      <h2>1. Upload documents</h2>
+      <div id="dropZone" class="drop-zone">
+        <p>Drag files here, or</p>
+        <label class="button secondary">
+          Choose files
+          <input type="file" id="fileInput" multiple accept=".pdf,.docx,.txt,.md" hidden>
+        </label>
+        <p class="hint">PDF, DOCX, TXT, MD · max 10 MB each</p>
+      </div>
+      <ul id="uploadStatus" class="status-list"></ul>
+    </section>
+
+    <!-- 2. DOCUMENT LIST -->
+    <section class="card">
+      <h2>2. My documents</h2>
+      <p class="hint">Only the checked documents are searched.</p>
+      <ul id="documentList" class="document-list"></ul>
+      <p id="emptyMessage" class="hint">No documents yet.</p>
+    </section>
+
+    <!-- 3. QUESTION + ANSWER -->
+    <section class="card">
+      <h2>3. Ask a question</h2>
+      <textarea id="question" placeholder="e.g. What is the deadline to enroll?"></textarea>
+      <button id="askButton" class="button">Ask</button>
+
+      <div id="answerBox" class="hidden">
+        <h3>Answer</h3>
+        <div id="answer" class="answer"></div>
+        <p id="answerInfo" class="answer-info"></p>
+        <h3>Sources</h3>
+        <div id="sources"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

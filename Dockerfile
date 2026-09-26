@@ -1,4 +1,3 @@
-# FILE: Dockerfile
 # A Docker image = your app + Python + all libraries, packed together,
 # so it runs the same way on any computer.
 
@@ -12,12 +11,14 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 4. Copy the code and the prebuilt index
+# 4. Copy the code and the web page (v2: no prebuilt index, users upload their files)
 COPY app ./app
-COPY data/index ./data/index
+COPY frontend ./frontend
+COPY samples ./samples
+RUN mkdir -p storage
 
-# 5. The API listens on port 8000
+# 5. The API listens on port 8000 (or on $PORT if the hosting service sets one, like Render)
 EXPOSE 8000
 
 # 6. Start the server (0.0.0.0 = reachable from outside the container)
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]

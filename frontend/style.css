@@ -1,0 +1,91 @@
+/* ---------- page ---------- */
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f6f8;
+  color: #222;
+  margin: 0;
+}
+header, main {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+header { padding-top: 28px; }
+h1 { font-size: 26px; margin-bottom: 4px; }
+h2 { font-size: 18px; margin-top: 0; }
+h3 { font-size: 15px; margin-bottom: 6px; }
+.subtitle, .hint { color: #666; font-size: 14px; }
+
+/* ---------- cards ---------- */
+.card {
+  background: white;
+  border-radius: 10px;
+  padding: 18px;
+  margin: 16px 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* ---------- buttons ---------- */
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 15px;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+}
+.button.secondary { background: #475569; }
+.button:disabled { background: #93a8d8; cursor: wait; }
+
+/* ---------- upload area ---------- */
+.drop-zone {
+  border: 2px dashed #b6c2d9;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+}
+.drop-zone.dragging { background: #eef3ff; border-color: #2563eb; }
+
+/* ---------- lists ---------- */
+.status-list, .document-list { list-style: none; padding: 0; margin: 10px 0 0; }
+.status-list li { font-size: 14px; padding: 4px 0; }
+.status-list .ok { color: #15803d; }
+.status-list .error { color: #b91c1c; }
+
+.document-list li {
+  display: flex;               /* checkbox, name, info, delete in one row */
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+.document-list .name { flex: 1; font-weight: bold; word-break: break-all; }
+.document-list .info { color: #666; font-size: 13px; }
+.delete-button {
+  border: none;
+  background: none;
+  color: #b91c1c;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+/* ---------- question + answer ---------- */
+textarea {
+  width: 100%;
+  box-sizing: border-box;
+  height: 70px;
+  padding: 10px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+.answer { white-space: pre-wrap; line-height: 1.5; }
+.answer.error { color: #b91c1c; }
+.answer-info { color: #666; font-size: 13px; }
+.source { border-top: 1px solid #eee; padding: 8px 0; font-size: 14px; }
+.source b { color: #2563eb; }
+.preview { color: #666; }
+.hidden { display: none; }

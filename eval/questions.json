@@ -1,57 +1,33 @@
 [
   {
-    "question": "What is the deadline for submitting the application for the Erasmus+ Mobility for Internship call?",
-    "expected_source": "Call for Traineeship 25-26 English version.pdf",
-    "expected_page": 11,
-    "expected_keywords": ["July", "25"]
-  },
-  {
-    "question": "What is the monthly grant amount for Group 1 countries under long-term Erasmus+ mobility?",
-    "expected_source": "Call for Traineeship 25-26 English version.pdf",
-    "expected_page": 5,
-    "expected_keywords": ["550", "euro"]
-  },
-  {
-    "question": "How many months must a student wait to re-take an exam if they did not pass it?",
-    "expected_source": "PUBB Regolamento didattico tipo CdS.pdf",
-    "expected_page": 4,
-    "expected_keywords": ["trenta", "giorni"]
-  },
-  {
-    "question": "What is the minimum passing score required for the final thesis presentation (prova finale)?",
-    "expected_source": "PUBB Regolamento didattico tipo CdS.pdf",
-    "expected_page": 8,
-    "expected_keywords": ["66/110"]
-  },
-  {
-    "question": "How many total credits (CFU) are required to complete the Bachelor's degree in Computer Science (Class L-31)?",
-    "expected_source": "Regolamento didattico informatica L-31 - Versione dell'01 Agosto 2025.pdf",
+    "question": "When does enrollment close?",
+    "expected_source": "example_regulations.pdf",
     "expected_page": 1,
-    "expected_keywords": ["180", "crediti"]
+    "expected_keywords": ["30 September"]
   },
   {
-    "question": "By what date must the study plan (piano di studi) be submitted on the UniME ESSE3 platform for Computer Science students?",
-    "expected_source": "Regolamento didattico informatica L-31 - Versione dell'01 Agosto 2025.pdf",
-    "expected_page": 6,
-    "expected_keywords": ["31", "gennaio"]
+    "question": "How many credits is the internship worth?",
+    "expected_source": "example_regulations.pdf",
+    "expected_page": 2,
+    "expected_keywords": ["6"]
   },
   {
-    "question": "How many total hours of overall workload correspond to 1 CFU in the Computer Science degree course?",
-    "expected_source": "Regolamento didattico informatica L-31 - Versione dell'01 Agosto 2025.pdf",
-    "expected_page": 5,
-    "expected_keywords": ["25", "ore"]
+    "question": "How many credits do I need to graduate?",
+    "expected_source": "example_regulations.pdf",
+    "expected_page": 2,
+    "expected_keywords": ["180"]
   },
   {
-    "question": "How many minimum credits (CFU) must be recognized for a student to be admitted to the 3rd year of Computer Science after a transfer?",
-    "expected_source": "Regolamento didattico informatica L-31 - Versione dell'01 Agosto 2025.pdf",
-    "expected_page": 14,
-    "expected_keywords": ["79"]
+    "question": "What time does the library open on Saturday?",
+    "expected_source": "example_regulations.pdf",
+    "expected_page": 3,
+    "expected_keywords": ["9"]
   },
   {
-    "question": "Who is the Person in Charge of the Process (Person in charge of the procedure) for the Erasmus+ Traineeship call?",
-    "expected_source": "Call for Traineeship 25-26 English version.pdf",
-    "expected_page": 12,
-    "expected_keywords": ["Norita", "Angelis"]
+    "question": "Where is the student office?",
+    "expected_source": "example_faq.txt",
+    "expected_page": 1,
+    "expected_keywords": ["Building B"]
   },
   {
     "question": "What is the capital of Australia?",

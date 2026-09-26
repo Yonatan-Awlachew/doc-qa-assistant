@@ -1,8 +1,8 @@
-# FILE: eval/run_eval.py
 """
 Measure how good the assistant is, with numbers (not just "it looks fine").
     python -m eval.run_eval
 
+Upload your documents first (web page or scripts/upload_folder.py).
 For each question in eval/questions.json we check two things:
   1. Retrieval hit: was the expected page among the retrieved chunks?
   2. Answer check:  does the answer contain all the expected keywords?
@@ -12,14 +12,12 @@ is "I could not find this in the documents." (this tests hallucinations).
 import json
 import time
 
-from app import config, rag, store
+from app import rag
 
 
 def main():
     with open("eval/questions.json", "r", encoding="utf-8") as f:
         questions = json.load(f)
-
-    vectors, chunks = store.load_index(config.INDEX_FOLDER)
 
     retrieval_hits = 0
     retrieval_total = 0
@@ -27,7 +25,7 @@ def main():
     results = []
 
     for number, item in enumerate(questions, start=1):
-        result = rag.answer_question(item["question"], vectors, chunks)
+        result = rag.ask(item["question"])   # v2: searches all uploaded documents
         answer = result["answer"].lower()
 
         # 1. Retrieval check (only for questions that have an expected page)

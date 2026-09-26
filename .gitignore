@@ -11,11 +11,12 @@ venv/
 # Mac system files
 .DS_Store
 
-# generated files (anyone can rebuild them with scripts/build_index.py)
-data/index/*
-!data/index/.gitkeep
+# v2: everything the app creates while running (uploaded files, indexes, database)
+storage/*
+!storage/.gitkeep
+
+# evaluation output
 eval/results.json
 
-# your PDFs stay on your computer (copyright + size)
-data/doc/*
-!data/doc/.gitkeep
+# v1 leftovers (in case the old folder is still on your computer)
+data/

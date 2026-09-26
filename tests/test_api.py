@@ -1,60 +1,115 @@
-# FILE: tests/test_api.py
 """
-Tests for the API. We replace ("mock") the Gemini calls with fake functions,
-so the tests run without internet, without an API key and for free.
+API tests for v2: upload, list, delete, ask.
+They use the fake AI (see conftest.py) and a temporary storage folder.
 """
-import numpy as np
 from fastapi.testclient import TestClient
 
-from app import llm, main
+from app import config, main
 
 client = TestClient(main.app)
 
-FAKE_CHUNKS = [
-    {"id": 0, "source": "rules.pdf", "page": 4, "text": "Enrollment closes on 30 September."},
-    {"id": 1, "source": "rules.pdf", "page": 9, "text": "The library opens at 8:00."},
-]
-FAKE_VECTORS = np.array([[1, 0], [0, 1]], dtype="float32")
+SAMPLE_PDF = "samples/example_regulations.pdf"
 
 
-def fake_embed_texts(texts, task_type="RETRIEVAL_DOCUMENT", batch_size=50):
-    return [[1.0, 0.0] for _ in texts]  # always "similar" to chunk 0
+def upload(filename, content):
+    return client.post("/documents", files={"file": (filename, content)})
 
 
-def fake_generate_answer(prompt):
-    return "Enrollment closes on 30 September [1]."
+def upload_sample_pdf():
+    with open(SAMPLE_PDF, "rb") as f:
+        return upload("regulations.pdf", f.read())
 
 
-def setup_fakes(monkeypatch):
-    monkeypatch.setattr(llm, "embed_texts", fake_embed_texts)
-    monkeypatch.setattr(llm, "generate_answer", fake_generate_answer)
-    main.index["vectors"] = FAKE_VECTORS
-    main.index["chunks"] = FAKE_CHUNKS
+# ---------- pages ----------
+
+def test_home_page():
+    response = client.get("/")
+    assert response.status_code == 200
+    assert "Document Q&amp;A Assistant" in response.text
 
 
 def test_health():
-    response = client.get("/health")
-    assert response.status_code == 200
-    assert response.json() == {"status": "ok"}
+    assert client.get("/health").json() == {"status": "ok"}
 
 
-def test_ask_returns_answer_and_sources(monkeypatch):
-    setup_fakes(monkeypatch)
-    response = client.post("/ask", json={"question": "When does enrollment close?", "top_k": 1})
+# ---------- upload ----------
+
+def test_upload_pdf(fake_ai):
+    response = upload_sample_pdf()
+    assert response.status_code == 201
+    data = response.json()
+    assert data["filename"] == "regulations.pdf"
+    assert data["pages"] == 3
+    assert data["chunks"] >= 3
+
+
+def test_upload_txt(fake_ai):
+    response = upload("notes.txt", b"The meeting is on Friday at 10.")
+    assert response.status_code == 201
+    assert response.json()["file_type"] == ".txt"
+
+
+def test_wrong_file_type_is_rejected(fake_ai):
+    response = upload("photo.png", b"12345")
+    assert response.status_code == 415
+
+
+def test_fake_pdf_is_rejected(fake_ai):
+    response = upload("virus.pdf", b"this is not a pdf")
+    assert response.status_code == 415
+
+
+def test_empty_file_is_rejected(fake_ai):
+    assert upload("empty.txt", b"").status_code == 422
+
+
+def test_too_big_file_is_rejected(fake_ai, monkeypatch):
+    monkeypatch.setattr(config, "MAX_FILE_MB", 0)       # every file is now "too big"
+    assert upload("notes.txt", b"hello").status_code == 413
+
+
+# ---------- list and delete ----------
+
+def test_list_and_delete(fake_ai):
+    doc_id = upload_sample_pdf().json()["id"]
+    upload("notes.txt", b"Some notes about exams.")
+
+    documents = client.get("/documents").json()
+    assert len(documents) == 2
+
+    assert client.delete(f"/documents/{doc_id}").status_code == 204
+    assert len(client.get("/documents").json()) == 1
+    assert client.delete(f"/documents/{doc_id}").status_code == 404   # already deleted
+
+
+# ---------- ask ----------
+
+def test_ask_returns_answer_and_sources(fake_ai):
+    upload_sample_pdf()
+    response = client.post("/ask", json={"question": "When does enrollment close?"})
     assert response.status_code == 200
     data = response.json()
-    assert "30 September" in data["answer"]
-    assert data["sources"][0]["source"] == "rules.pdf"
-    assert data["sources"][0]["page"] == 4
+    assert data["answer"] == "FAKE ANSWER [1]"
+    assert data["sources"][0]["source"] == "regulations.pdf"
+    assert data["model"] != ""        # the response says which model answered
+    assert data["seconds"] >= 0       # and how long it took
 
 
-def test_question_too_short_is_rejected(monkeypatch):
-    setup_fakes(monkeypatch)
-    response = client.post("/ask", json={"question": "hi"})
-    assert response.status_code == 422  # 422 = the input JSON is not valid
+def test_ask_only_in_selected_documents(fake_ai):
+    upload_sample_pdf()
+    notes_id = upload("notes.txt", b"The meeting is on Friday at 10.").json()["id"]
+
+    response = client.post("/ask", json={"question": "When is the meeting?", "document_ids": [notes_id]})
+    sources = response.json()["sources"]
+    assert len(sources) > 0
+    for source in sources:
+        assert source["document_id"] == notes_id        # nothing from the PDF
 
 
-def test_stats(monkeypatch):
-    setup_fakes(monkeypatch)
-    response = client.get("/stats")
-    assert response.json() == {"chunks": 2, "documents": ["rules.pdf"]}
+def test_ask_without_documents(fake_ai):
+    response = client.post("/ask", json={"question": "Anything here?"})
+    assert response.status_code == 400
+
+
+def test_question_too_short():
+    assert client.post("/ask", json={"question": "hi"}).status_code == 422
