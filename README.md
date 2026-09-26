@@ -83,8 +83,8 @@ python -m eval.run_eval                  # retrieval hit rate + answer pass rate
 
 | Metric (sample documents) | Result |
 |---|---|
-| Retrieval hit rate | _fill in_ |
-| Answer pass rate | _fill in_ |
+| Retrieval hit rate | 5/5 = 100% |
+| Answer pass rate | 4/6 = 67% |
 
 ## Design choices
 - **One index per document** (NumPy + JSON in `storage/index/<id>/`): adding or deleting a file never rebuilds the others; searching selected documents = loading only their indexes.
