@@ -6,7 +6,8 @@ Answers come **only from your files**, with **citations** (file + page).
 Built with Python, FastAPI, SQLite, NumPy and plain HTML/CSS/JavaScript.
 Answers are written by **Groq (Llama 3.3 70B)**, retrieval uses **Gemini embeddings**; any OpenAI-compatible provider can be switched in from `.env`.
 
-![Web page](docs/screenshot.png)
+![Web page](docs/upper_part.png)
+![Web page](docs/lower_part.png)
 
 ## What's new in v2
 | v1 | v2 |
